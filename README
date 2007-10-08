@@ -1,0 +1,39 @@
+= medusa - The terminology manager for perseus-a
+
+== VERSION
+
+This documentation refers to medusa version 0.0.1
+
+
+== DESCRIPTION
+
+TODO: well, the description... ;-)
+
+Developed at "prometheus - Das verteilte digitale Bildarchiv für Forschung
+und Lehre" (Institute for Art History, University of Cologne, Germany), during
+the project "perseus-a - Automatische Erschließung des prometheus-Bildarchivs"
+("Automatic indexing for the prometheus image archive"), funded by the
+RheinEnergieStiftung Cologne, Germany.
+
+
+== AUTHORS
+
+* Jens Wille <mailto:jens.wille@uni-koeln.de>
+
+
+== LICENSE AND COPYRIGHT
+
+Copyright (C) 2007 Cologne University of Applied Sciences,
+Claudiusstr. 1, 50678 Cologne, Germany
+
+medusa is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+medusa is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+medusa. If not, see <http://www.gnu.org/licenses/>.

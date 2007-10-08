@@ -1,0 +1,186 @@
+#! /usr/bin/ruby
+
+#--
+###############################################################################
+#                                                                             #
+# medusa -- The terminology manager for perseus-a                             #
+#                                                                             #
+# Copyright (C) 2007 Cologne University of Applied Sciences,                  #
+#                    Claudiusstr. 1,                                          #
+#                    50678 Cologne, Germany                                   #
+#                                                                             #
+# Authors:                                                                    #
+#     Jens Wille <jens.wille@uni-koeln.de>                                    #
+#                                                                             #
+# medusa is free software; you can redistribute it and/or modify it under the #
+# terms of the GNU General Public License as published by the Free Software   #
+# Foundation; either version 3 of the License, or (at your option) any later  #
+# version.                                                                    #
+#                                                                             #
+# medusa is distributed in the hope that it will be useful, but WITHOUT ANY   #
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more       #
+# details.                                                                    #
+#                                                                             #
+# You should have received a copy of the GNU General Public License along     #
+# with medusa. If not, see <http://www.gnu.org/licenses/>.                    #
+#                                                                             #
+###############################################################################
+#++
+
+require 'optparse'
+
+require 'rubygems'
+require 'highline/import'
+
+$: << File.join(File.dirname(__FILE__), '..', 'lib')
+
+require 'medusa'
+
+# overwrite to allow default value and fix regexp
+def agree(yes_or_no_question, default = 'no')
+  ask("#{yes_or_no_question} (yes/no): ", lambda { |yn| yn =~ /\Ay/i }) { |q|
+    q.validate                 = /\A(?:y(?:es)?|no?)\Z/i
+    q.responses[:not_valid]    = 'Please enter "yes" or "no".'
+    q.responses[:ask_on_error] = :question
+    q.default                  = default
+  }
+end
+
+def open_file_or_std(file, mode = 'r')
+  if file
+    File.open(file, mode)
+  else
+    case mode
+      when 'r': STDIN
+      when 'w': STDOUT
+      when 'a': STDERR
+      else      raise ArgumentError, "don't know how to handle mode '#{mode}'"
+    end
+  end
+end
+
+PROGRAM_NAME = File.basename($0)
+
+USAGE = "\
+Usage: #{$0} <action> <terminology> [options...]
+       #{$0} {-h|--help}"
+
+abort USAGE if ARGV.empty?
+
+options = {}
+
+OptionParser.new { |opts|
+  opts.banner = USAGE
+
+  opts.separator ''
+  opts.separator 'Required arguments:'
+
+  opts.separator '    action                           The action to perform'
+  opts.separator '    terminology                      The name of the terminology to operate on'
+
+  opts.separator ''
+  opts.separator 'Options:'
+
+  opts.on('-f', '--file FILE', 'Operates on FILE (instead of STDIN/STDOUT)') { |f|
+    options[:file] = f
+  }
+
+  opts.on('-t', '--type TYPE', 'Type of file (Import/Export format)') { |t|
+    options[:type] = t
+  }
+
+  opts.separator ''
+  opts.separator 'Generic options:'
+
+  opts.on('-h', '--help', 'Print this help message and exit') {
+    abort opts.to_s
+  }
+
+  opts.on('--help-actions', 'List available actions and exit') {
+    puts "Available actions for #{PROGRAM_NAME}:"
+
+    actions = Medusa.actions
+    max     = actions.map { |a, _| a.length }.max
+    actions.each { |a, d|
+      puts "  - %-#{max}s : %s" % [a, d]
+    }
+
+    abort
+  }
+
+  opts.on('--help-import', 'List available import formats (types) and exit') {
+    puts 'Available import formats (types):'
+
+    formats = Medusa.import_formats
+    max     = formats.map { |a, _| a.length }.max
+    formats.each { |t, k|
+      puts "  - %-#{max}s = %s" % [t, k]
+    }
+
+    abort
+  }
+
+  opts.on('--help-export', 'List available export formats (types) and exit') {
+    puts 'Available export formats (types):'
+
+    formats = Medusa.export_formats
+    max     = formats.map { |a, _| a.length }.max
+    formats.each { |t, k|
+      puts "  - %-#{max}s = %s" % [t, k]
+    }
+
+    abort
+  }
+
+  opts.on('--version', 'Print program version and exit') {
+    abort "#{PROGRAM_NAME} v#{Medusa::VERSION}"
+  }
+}.parse!
+
+unless ARGV.size == 2
+  abort "Both action and terminology must be given.\n\n#{USAGE}"
+else
+  action, terminology = ARGV.slice!(0..1).map { |a| a.downcase }
+end
+
+unless Medusa.valid_action?(action)
+  abort "Invalid action: '#{action}'. " <<
+        "See '--help-actions' for a list of available actions."
+end
+
+unless %w[create import].include?(action) && Medusa.terminology_exists?(terminology)
+  msg = "No such terminology: '#{terminology}'."
+  msg << " Please create one first with '--create'." unless action == 'delete'
+
+  abort msg
+end
+
+args = [terminology]
+
+case action
+  when 'create'
+    if Medusa.terminology_exists?(terminology)
+      abort "Terminology already exists: '#{terminology}'."
+    end
+  when 'delete'
+    unless agree("Really delete terminology '#{terminology}'?")
+      abort "Aborted! Won't delete terminology '#{terminology}'."
+    end
+  when 'import', 'export'
+    unless options[:type]
+      abort "No #{action} format specified. Use '--type' to do so."
+    end
+
+    unless Medusa.valid_format?(action, options[:type])
+      abort "Invalid #{action} format: '#{options[:type]}'. " <<
+            "See '--help-#{action}' for a list of available #{action} formats."
+    end
+
+    args << open_file_or_std(options[:file], action == 'export' ? 'w' : 'r')
+    args << options[:type]
+  when 'dump'
+    args << open_file_or_std(options[:file], 'w')
+end
+
+Medusa.run(action, *args)
