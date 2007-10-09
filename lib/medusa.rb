@@ -27,7 +27,7 @@
 #++
 
 require 'rubygems'
-require 'prometheus_conv'
+require 'athena'
 
 require 'medusa/version'
 require 'medusa/terminology'
@@ -45,15 +45,15 @@ module Medusa
   end
 
   def import_formats
-    PrometheusConv.input_formats
+    Athena.input_formats
   end
 
   def export_formats
-    PrometheusConv.output_formats
+    Athena.output_formats
   end
 
   def valid_format?(direction, format)
-    PrometheusConv.valid_format?({ :import => :in, :export => :out }[direction], format)
+    Athena.valid_format?({ :import => :in, :export => :out }[direction], format)
   end
 
   def terminology_exists?(terminology)

@@ -44,6 +44,7 @@ spec = Gem::Specification.new do |s|
                        '-c' << 'UTF-8'
 
   s.add_dependency('highline')
+  s.add_dependency('athena')
 end
 
 desc 'Build gem package for medusa'
