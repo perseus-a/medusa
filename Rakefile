@@ -14,7 +14,7 @@ Hen.lay! {{
   :gem => {
     :version      => Medusa::VERSION,
     :summary      => 'The terminology management software for perseus-a.',
-    :files        => FileList['lib/**/*.rb'].to_a,
+    :files        => FileList['lib/**/*.rb', 'bin/*'].to_a,
     :extra_files  => FileList['[A-Z]*'].to_a,
     :dependencies => %w[highline athena]
   }
