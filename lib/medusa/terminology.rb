@@ -73,7 +73,8 @@ module Medusa
       puts 'deleted!'
     end
 
-    action :import, "Import data into a terminology (if the terminology doesn't exist, it will be created)"
+    action :import, "Import data into a terminology (if the terminology " <<
+                    "doesn't exist, it will be created)"
     def import(file, type)
       puts "imported: #{file}, #{type}"
     end

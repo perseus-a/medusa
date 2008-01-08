@@ -151,7 +151,7 @@ end
 
 unless %w[create import].include?(action) && Medusa.terminology_exists?(terminology)
   msg = "No such terminology: '#{terminology}'."
-  msg << " Please create one first with '--create'." unless action == 'delete'
+  msg << " Please create one first with 'create'." unless action == 'delete'
 
   abort msg
 end
