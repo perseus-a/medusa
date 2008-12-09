@@ -16,6 +16,14 @@ the project "perseus-a - Automatische Erschließung des prometheus-Bildarchivs"
 RheinEnergieStiftung Cologne, Germany.
 
 
+== LINKS
+
+<b></b>
+Documentation::     <http://prometheus.rubyforge.org/medusa>
+Source code::       <http://github.com/blackwinter/medusa>
+Rubyforge project:: <http://rubyforge.org/projects/prometheus>
+
+
 == AUTHORS
 
 * Jens Wille <mailto:jens.wille@uni-koeln.de>
