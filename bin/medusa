@@ -112,10 +112,8 @@ OptionParser.new { |opts|
   opts.on('--help-import', 'List available import formats (types) and exit') {
     puts 'Available import formats (types):'
 
-    formats = Medusa.import_formats
-    max     = formats.map { |a, _| a.length }.max
-    formats.each { |t, k|
-      puts "  - %-#{max}s = %s" % [t, k]
+    Medusa.import_formats.each { |f, k|
+      puts "  - #{f}#{" (= #{k})" if f != k.to_s}"
     }
 
     abort
@@ -124,10 +122,8 @@ OptionParser.new { |opts|
   opts.on('--help-export', 'List available export formats (types) and exit') {
     puts 'Available export formats (types):'
 
-    formats = Medusa.export_formats
-    max     = formats.map { |a, _| a.length }.max
-    formats.each { |t, k|
-      puts "  - %-#{max}s = %s" % [t, k]
+    Medusa.export_formats.each { |f, k|
+      puts "  - #{f}#{" (= #{k})" if f != k.to_s}"
     }
 
     abort
